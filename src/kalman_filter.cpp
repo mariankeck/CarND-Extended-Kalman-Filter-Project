@@ -32,7 +32,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // Calculate measurement function h
   float rho = sqrt(x_[0] * x_[0] + x_[1] * x_[1]);
   float phi = atan2(x_[1], x_[0]);
-  float rho_dot = fabs(rho) < 0.0001 ? 0 : x_[0] * x_[2] + x_[1] * x_[3] / rho;
+  float rho_dot = fabs(rho) < 0.0001 ? 0 : (x_[0] * x_[2] + x_[1] * x_[3]) / rho;
 
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
