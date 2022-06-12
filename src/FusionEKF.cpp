@@ -74,7 +74,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                0, 0, 0, 1;
 
     // Initialize the identity matrix
-    long x_size = ekf_.x_.size();
+    unsigned char x_size = ekf_.x_.size();
     ekf_.I_ = MatrixXd::Identity(x_size, x_size);
 
     // Initialization done, no need to predict or update
@@ -119,7 +119,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
     ekf_.R_ = R_radar_;
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
-
   } else {
     // Laser update
     ekf_.H_ = H_laser_;
