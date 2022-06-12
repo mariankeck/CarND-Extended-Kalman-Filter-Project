@@ -38,12 +38,13 @@ class FusionEKF {
   // previous timestamp
   long long previous_timestamp_;
 
-  // tool object used to compute Jacobian and RMSE
+  // Tool object used to compute Jacobian and RMSE
   Tools tools;
+
+  // Measurement matrices
   Eigen::MatrixXd R_laser_;
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
-  Eigen::MatrixXd Hj_;
 };
 
 #endif // FusionEKF_H_
