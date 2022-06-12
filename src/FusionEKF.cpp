@@ -51,9 +51,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * TODO: Create the covariance matrix.
      * You'll need to convert radar from polar to cartesian coordinates.
      */
-
-    cout << "Kalman filter initialization" << endl;
-
+    
     MatrixXd P = MatrixXd(4, 4);
     P << 1, 0, 0, 0,
          0, 1, 0, 0,
@@ -76,11 +74,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // TODO: Convert radar from polar to cartesian coordinates 
       //         and initialize state.
-
-      // ekf_.Init(x, P, F, H_ra, R, Q);
-
+      x << 0, 0, 0, 0;
+      ekf_.Init(x, P, F, H_laser_, R_laser_, Q);
+      is_initialized_ = true;
     } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
-      // Set the state with the initial x/y position and zero velocity
+      // Set the state with the initial (x, y) position and zero velocity
       x << measurement_pack.raw_measurements_[0], 
            measurement_pack.raw_measurements_[1], 
            0, 
@@ -91,6 +89,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       is_initialized_ = true;
     }
 
+    cout << "Kalman filter initialization done" << endl;
     return;  // Done initializing, no need to predict or update
   }
 
@@ -115,17 +114,19 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float noise_ay = 9;
   
   previous_timestamp_ = measurement_pack.timestamp_;
+  cout << "Check" << endl;
 
   ekf_.F_(0, 2) = dt;
   ekf_.F_(1, 3) = dt;
 
   ekf_.Q_ = MatrixXd(4, 4);
-  ekf_.Q_ <<  dt_4 / 4 * noise_ax, 0, dt_3 /  2 * noise_ax, 0,
-              0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
-              dt_3 / 2 * noise_ax, 0, dt_2 * noise_ax, 0,
-              0, dt_3 / 2 * noise_ay, 0, dt_2 * noise_ay;
-  
+  ekf_.Q_ << dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
+             0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
+             dt_3 / 2 * noise_ax, 0, dt_2 * noise_ax, 0,
+             0, dt_3 / 2 * noise_ay, 0, dt_2 * noise_ay;
+
   ekf_.Predict();
+  cout << "Prediction done" << endl;
 
   /**
    * Update
