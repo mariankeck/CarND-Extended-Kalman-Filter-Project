@@ -38,7 +38,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    * Initialization
    */
   if (!is_initialized_) {
-    VectorXd x = VectorXd(4);
+    ekf_.x_ = VectorXd(4);
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // Convert radar measurements from polar to cartesian coordinates 
       // and initialize state.
@@ -49,13 +49,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       float py = rho * sin(phi);
       float vx = rho_dot * cos(phi);
       float vy = rho_dot * sin(phi);
-      x << px, py, vx, vy;
+      ekf_.x_ << px, py, vx, vy;
     } else {
       // Initialize state by laser measurements, set the state with the 
       // initial (x, y) position and zero velocity
       float px = measurement_pack.raw_measurements_[0];
       float py = measurement_pack.raw_measurements_[1];
-      x << px, py, 0, 0;
+      ekf_.x_ << px, py, 0, 0;
     }
     previous_timestamp_ = measurement_pack.timestamp_;
 
@@ -74,7 +74,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                0, 0, 0, 1;
 
     // Initialize the identity matrix
-    long x_size = x.size();
+    long x_size = ekf_.x_.size();
     ekf_.I_ = MatrixXd::Identity(x_size, x_size);
 
     // Initialization done, no need to predict or update
