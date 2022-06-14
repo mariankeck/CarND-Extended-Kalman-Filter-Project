@@ -37,11 +37,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   /**
    * Initialization
    */
+
   if (!is_initialized_) {
     ekf_.x_ = VectorXd(4);
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // Convert radar measurements from polar to cartesian coordinates 
-      // and initialize state.
+      // and initialize state
       float rho = measurement_pack.raw_measurements_[0];
       float phi = measurement_pack.raw_measurements_[1];
       float rho_dot = measurement_pack.raw_measurements_[2];
@@ -86,6 +87,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    * Prediction
    */
   
+  // Pre-compute a set of dt terms to avoid repeated calculation
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
   float dt_2 = dt * dt;
   float dt_3 = dt_2 * dt;
@@ -126,7 +128,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.Update(measurement_pack.raw_measurements_);
   }
 
-  // print the output
   cout << "x:\n" << ekf_.x_ << endl;
   cout << "P:\n" << ekf_.P_ << endl;
 }
