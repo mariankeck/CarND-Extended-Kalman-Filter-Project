@@ -26,7 +26,8 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd K = P_ * Ht * S.inverse();
 
   x_ = x_ + K * y;
-  P_ = (I_ - K * H_) * P_;
+  // P_ = (I_ - K * H_) * P_;
+  P_ -= K * H_ * P_;  // Shorter form as above, feedback from reviewer
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -46,5 +47,5 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd K = P_ * Ht * S.inverse();
 
   x_ = x_ + K * y;
-  P_ = (I_ - K * H_) * P_;
+  P_ -= K * H_ * P_;
 }

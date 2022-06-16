@@ -74,9 +74,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                0, 0, 1, 0,
                0, 0, 0, 1;
 
-    // Initialize the identity matrix
-    unsigned char x_size = ekf_.x_.size();
-    ekf_.I_ = MatrixXd::Identity(x_size, x_size);
+    // Initialize the identity matrix (obsolete)
+    // unsigned char x_size = ekf_.x_.size();
+    // ekf_.I_ = MatrixXd::Identity(x_size, x_size);
 
     // Initialization done, no need to predict or update
     is_initialized_ = true;
