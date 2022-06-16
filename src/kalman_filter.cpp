@@ -40,8 +40,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
   // Ensure that the phi error is between +/-pi
-  while (y[1] < -M_PI) y[1] += 2 * M_PI;
-  while (y[1] > M_PI) y[1] -= 2 * M_PI;
+  // while (y[1] < -M_PI) y[1] += 2 * M_PI;
+  // while (y[1] > M_PI) y[1] -= 2 * M_PI;
+  y[1] = atan2(sin(y[1]),cos(y[1]));  // Improved from code review
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd K = P_ * Ht * S.inverse();
